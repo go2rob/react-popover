@@ -1,21 +1,40 @@
 import React, { Component } from 'react'
 
-const PopWindow = (props) => {
+export const PopContent = (props) => {
   // console.log(props)
   if (props.pop) {
-    return (<div>Pop Over</div>)
+    return (
+      <div  className = 'popover-content'
+      style={{
+        'zIndex':  '99',
+        'position':  'absolute',
+        'top': '50px',
+        'left': '535px',
+        'border': '1px solid black',
+        'backgroundColor': 'white'
+      }}>
+        <button>Pop Over</button>
+        <button>Pop Over</button>
+      </div>)
   } else {
     return ("")
   }
 }
 
 export default class Popover extends Component {
+
   constructor(props) {
     super(props)
     this.state = {
-      direction: this.getPosition(props),
-      popover: false
+      position: this.getPosition(props),
+      popup: false,
+      targetId: props.targetId
     }
+  }
+  componentDidMount() {
+    this.setState({
+      targetId: this.props.targetId
+    })
   }
 
   getPosition = (props) => {
@@ -33,18 +52,15 @@ export default class Popover extends Component {
   }
   togglePop = () => {
     this.setState({
-      popover: !this.state.popover
+      popup: !this.state.popup
     })
   }
   render() {
+    let source = document.getElementById(this.state.targetId)
+    if (source) { source.addEventListener("click", this.togglePop) }
     return (
-      <div>
-        <div className = 'buttons'>
-          <button onClick = {this.togglePop}>
-            Down
-          </button>
-          <PopWindow pop = {this.state.popover}/>
-        </div>
+      <div className = 'react-popover'>
+        <PopContent pop = {this.state.popup}/>
       </div>
     )
   }

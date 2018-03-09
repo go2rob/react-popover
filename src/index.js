@@ -11,16 +11,62 @@ const Buttons = props => {
         <button id = 'popBottom'> Bottom </button>
       </div>
       <div className = 'buttons'>
-        <button id = 'popUp'> Up </button>
+        <button id = 'popTop'> Top </button>
       </div>
       <div className = 'buttons'>
         <button id = 'popLeft'> Left </button>
       </div>
       <div className = 'buttons'>
         <button id = 'popRight'> Right </button>
-        <span>hai</span>
       </div>
-      <Popover right targetId = 'popRight'/>
+      <Popover
+        right
+        targetId = 'popRight'
+        title = 'Popover Title'
+        body = {
+          <div>
+            <b>Bold Text</b>
+            <p><i>Italic Text</i></p>
+            <p><button>Button</button></p>
+          </div>
+        }
+      />
+      <Popover
+        left
+        targetId = 'popLeft'
+        title = 'Popover Title'
+        body = {
+          <div>
+            <b>Bold Text</b>
+            <p><i>Italic Text</i></p>
+            <p><button>Button</button></p>
+          </div>
+        }
+      />
+      <Popover
+        top
+        targetId = 'popTop'
+        title = 'Popover Title'
+        body = {
+          <div>
+            <b>Bold Text</b>
+            <p><i>Italic Text</i></p>
+            <p><button>Button</button></p>
+          </div>
+        }
+      />
+      <Popover
+        bottom
+        targetId = 'popBottom'
+        title = 'Popover Title'
+        body = {
+          <div>
+            <b>Bold Text</b>
+            <p><i>Italic Text</i></p>
+            <p><button>Button</button></p>
+          </div>
+        }
+      />
     </div>
   )
 }

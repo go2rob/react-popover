@@ -49,48 +49,84 @@ export default class Popover extends Component {
     }
   }
   updateStyle() {
-    console.log('updating style')
     setTimeout(() => {
       if (this.updatedCss) {
-        if (this.updatedCss.main.left !== 'NaNpx') {
-          this.setState({
-            css: this.updatedCss
-          })
-        }
+        this.setState({
+          css: this.updatedCss
+        })
+        this.updatedCss = null
       }
     }, 0)
   }
 
+  snapPosition(node, target, position) {
+    if (node) {
+      let targetWidth = this.state.target.offsetWidth
+      let targetHeight = this.state.target.offsetHeight
+      let [nodeWidth, nodeHeight] = [node.offsetWidth, node.offsetHeight]
+      let [l, t, w, h] = [target.offsetLeft, target.offsetTop, target.offsetWidth, target.offsetHeight]
+      let [docWidth, docHeight] = [document.documentElement.clientWidth, document.documentElement.clientHeight]
+      let left, right, top, bottom;
+      switch (position) {
+        case 'right':
+          left = (l + w)
+          top = (t - ((nodeHeight - targetHeight)/2.0))+'px'
+          break;
+        case 'left':
+          right = docWidth - l
+          top = (t - ((nodeHeight - targetHeight)/2.0))+'px'
+          break;
+        case 'top':
+          bottom = docHeight - t
+          left = (l - ((nodeWidth - targetWidth)/2.0))+'px'
+          break;
+        case 'bottom':
+          left = (l - ((nodeWidth - targetWidth)/2.0))+'px'
+          top = t + h
+          break;
+        default:
+
+      }
+
+      this.updatedCss = {
+        ...this.state.css,
+        main: {
+          ...this.state.css.main,
+          right: right,
+          left: left,
+          top: top,
+          bottom: bottom,
+          opacity: 1
+        }
+      }
+    } else {
+      this.updatedCss = null
+    }
+  }
+
   render() {
-    console.log('rendering')
     this.updateStyle()
     if (this.state.target) { this.listenToEvent(this.props.on, this.state.target) }
     if (this.state.show) {
       return (
         <div
-          ref = {node => this.updatedCss = node
-            ? {
-              ...this.state.css,
-              main: {
-                ...this.state.css.main,
-                left: (this.state.css.main.left - ((node.offsetWidth - this.state.target.offsetWidth)/2.0))+'px',
-                opacity: 1
-              }
-            } : null}
+          ref = {
+            node => this.snapPosition(node, this.state.target, this.state.position)
+          }
           className = 'popover'
           style = {this.state.css.main}>
-          <PopoverTitle
-            title = {this.props.title}
-            style = {this.state.css.title}
-          />
-          <PopoverBody
-            body = {this.props.body}
-            style = {this.state.css.body}
-          />
+          <center>
+            <PopoverTitle
+              title = {this.props.title}
+              style = {this.state.css.title}
+            />
+            <PopoverBody
+              body = {this.props.body}
+              style = {this.state.css.body}
+            />
+          </center>
         </div>)
-    } else {
-      return ("")
-    }
+    } else {return ("")}
   }
 }
 
@@ -101,10 +137,7 @@ export const PopoverBody = (props) => {
       style = {props.style}>
       {props.body}
     </div>)
-
-  } else {
-    return('')
-  }
+  } else {return('')}
 }
 
 export const PopoverTitle = (props) => {
@@ -114,7 +147,5 @@ export const PopoverTitle = (props) => {
       style = {props.style}>
       {props.title}
     </div>)
-  } else {
-    return('');
-  }
+  } else {return('')}
 }

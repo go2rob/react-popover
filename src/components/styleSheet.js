@@ -36,7 +36,11 @@ const setStyles = (position, target) => {
     left: calculatePosition().left,
     right: calculatePosition().right,
     bottom: calculatePosition().bottom,
+    visibility: 'visible',
+    opacity: 0,
     zIndex:  '999',
+    padding: '5px',
+    borderRadius: '2px',
     position:  'absolute',
     border: '1px solid black',
     backgroundColor: 'white'
@@ -44,3 +48,16 @@ const setStyles = (position, target) => {
 }
 
 export default setStyles
+
+export const setTitleStyles = () => {
+  return ({
+    borderBottom: '0.75px solid black',
+    paddingBottom: '3px'
+  })
+}
+
+export const setBodyStyles = () => {
+  return ({
+    paddingTop: '3px'
+  })
+}

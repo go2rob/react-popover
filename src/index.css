@@ -4,6 +4,6 @@ body {
   font-family: sans-serif;
 }
 .buttons {
-  padding: 125px;
+  padding: 150px 125px 125px 125px;
   display: inline-block;
 }

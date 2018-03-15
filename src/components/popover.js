@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
-import setStyles, { setTitleStyles, setBodyStyles } from './styleSheet'
+import setStyles, { setTitleStyles, setBodyStyles, setArrowStyles, setArrowBorderStyles } from './styleSheet'
+import { debounce, throttle } from 'lodash'
+
 
 export default class Popover extends Component {
 
@@ -17,9 +19,11 @@ export default class Popover extends Component {
     this.setState({
       target: target,
       css: {
-        main: this.getStyles(this.state.position, target),
-        title: this.getTitleStyles(),
-        body: this.getBodyStyles()
+        main: setStyles(this.state.position, target),
+        title: setTitleStyles(),
+        body: setBodyStyles(),
+        arrow: setArrowStyles(this.state.position),
+        arrowBorder: setArrowBorderStyles(this.state.position)
       }
     })
   }
@@ -27,10 +31,6 @@ export default class Popover extends Component {
   getPosition = props => (Object.keys(props).find(
     (prop) => ['right', 'left', 'top', 'bottom'].includes(prop.toLowerCase())
   ) || 'right').toLowerCase()
-
-  getStyles = (position, target) => setStyles(position, target)
-  getTitleStyles = () => setTitleStyles()
-  getBodyStyles = () => setBodyStyles()
 
   showPop = () => this.setState({ show: true })
   hidePop = () => this.setState({ show: false })
@@ -45,10 +45,10 @@ export default class Popover extends Component {
         break;
       default:
         target.addEventListener("click", this.togglePop)
-        // target.addEventListener("blur", this.hidePop)
+        target.addEventListener("blur", this.hidePop)
     }
   }
-  updateStyle() {
+  updatePosition() {
     setTimeout(() => {
       if (this.updatedCss) {
         this.setState({
@@ -59,30 +59,40 @@ export default class Popover extends Component {
     }, 0)
   }
 
-  snapPosition(node, target, position) {
+  // handleResize(node) {
+  //   this.snapPosition(node)
+  //   if (this.updatedCss) {
+  //     console.log('here I am')
+  //     this.setState({
+  //       css: this.updatedCss
+  //     })
+  //   }
+  // }
+
+  snapPosition(node) {
     if (node) {
-      let targetWidth = this.state.target.offsetWidth
-      let targetHeight = this.state.target.offsetHeight
+      let target = this.state.target
+      let [targetWidth, targetHeight] = [target.offsetWidth, target.offsetHeight]
       let [nodeWidth, nodeHeight] = [node.offsetWidth, node.offsetHeight]
       let [l, t, w, h] = [target.offsetLeft, target.offsetTop, target.offsetWidth, target.offsetHeight]
       let [docWidth, docHeight] = [document.documentElement.clientWidth, document.documentElement.clientHeight]
       let left, right, top, bottom;
-      switch (position) {
+      switch (this.state.position) {
         case 'right':
-          left = (l + w)
+          left = (l + w + 10)
           top = (t - ((nodeHeight - targetHeight)/2.0))+'px'
           break;
         case 'left':
-          right = docWidth - l
+          right = docWidth - l + 10
           top = (t - ((nodeHeight - targetHeight)/2.0))+'px'
           break;
         case 'top':
-          bottom = docHeight - t
+          bottom = docHeight - t + 10
           left = (l - ((nodeWidth - targetWidth)/2.0))+'px'
           break;
         case 'bottom':
           left = (l - ((nodeWidth - targetWidth)/2.0))+'px'
-          top = t + h
+          top = t + h + 10
           break;
         default:
 
@@ -105,16 +115,25 @@ export default class Popover extends Component {
   }
 
   render() {
-    this.updateStyle()
+    this.updatePosition()
     if (this.state.target) { this.listenToEvent(this.props.on, this.state.target) }
     if (this.state.show) {
       return (
         <div
           ref = {
-            node => this.snapPosition(node, this.state.target, this.state.position)
+            node => {
+              // window.addEventListener('resize', throttle(() => {
+              //    this.handleResize(node)
+              // }, 1000))
+              this.snapPosition(node)
+            }
           }
           className = 'popover'
           style = {this.state.css.main}>
+          <div>
+            <span className = 'arrow' style = {this.state.css.arrow}/>
+            <span className = 'arrow-border' style = {this.state.css.arrowBorder}/>
+          </div>
           <center>
             <PopoverTitle
               title = {this.props.title}

@@ -59,6 +59,7 @@ const Buttons = props => {
         bottom
         targetId = 'popBottom'
         title = 'Popover Title'
+        on = 'hover'
         body = {
           <div>
             <b>Bold Text</b>
